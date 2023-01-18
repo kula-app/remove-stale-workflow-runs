@@ -1,5 +1,5 @@
 {
-  "name": "kula-app/remove-stale-workflow-runs",
+  "name": "@kula.app/remove-stale-workflow-runs",
   "version": "1.0.0",
   "description": "GitHub action to remove stale workflow runs",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "lint": "eslint .",
     "prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
     "test": "jest",
-    "all": "npm run lint && npm run prepare && npm run test"
+    "all": "yarn run lint && yarn run prepare && yarn run test"
   },
   "repository": {
     "type": "git",
