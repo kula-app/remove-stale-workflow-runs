@@ -9,6 +9,9 @@
     "test": "jest",
     "all": "yarn run lint && yarn run prepare && yarn run test"
   },
+  "engines": {
+    "node": "^16"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kula-app/remove-stale-workflow-runs.git"
