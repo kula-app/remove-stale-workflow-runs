@@ -10,7 +10,7 @@
     "all": "yarn run lint && yarn run prepare && yarn run test"
   },
   "engines": {
-    "node": "^16"
+    "node": "^18.0.0"
   },
   "repository": {
     "type": "git",
