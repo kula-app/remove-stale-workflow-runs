@@ -13,7 +13,9 @@ test('test runs', () => {
   } catch (error) {
     console.error(error);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    console.error(error.output.toString());
+    console.error(error.stdout.toString());
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    console.error(error.stderr.toString());
     fail(error);
   }
 });
