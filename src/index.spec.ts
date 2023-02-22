@@ -8,12 +8,12 @@ test('test runs', () => {
   const ip = path.join(__dirname, '../', 'dist', 'index.js');
   const cmd = `node ${ip}`;
   try {
-    console.log(cp.execSync('ls', { env: process.env }).toString());
-    console.log(cp.execSync('ls ../', { env: process.env }).toString());
     const result = cp.execSync(cmd, { env: process.env }).toString();
     console.log(result);
   } catch (error) {
     console.error(error);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    console.error(error.output.toString());
     fail(error);
   }
 });
