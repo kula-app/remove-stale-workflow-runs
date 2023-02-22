@@ -6,6 +6,12 @@ test('test runs', () => {
   process.env['INPUT_REPOSITORY'] = 'kula-app/remove-stale-workflow-runs';
   process.env['INPUT_MAX_RUNS_LIMIT'] = '5000';
   const ip = path.join(__dirname, '../', 'dist', 'index.js');
-  const result = cp.execSync(`node ${ip}`, { env: process.env }).toString();
-  console.log(result);
+  const cmd = `node ${ip}`;
+  try {
+    const result = cp.execSync(cmd, { env: process.env }).toString();
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+    fail(error);
+  }
 });
