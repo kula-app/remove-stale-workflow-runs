@@ -8,7 +8,7 @@
     "prepare": "ncc build src/index.ts -o dist --source-map --license licenses.txt --minify",
     "test": "jest",
     "all": "yarn run lint && yarn run prepare && yarn run test",
-    "watch": "ncc build src/index.ts --watch -o dist --source-map --license licenses.txt"
+    "watch": "ncc build src/index.ts --watch -o dist --source-map"
   },
   "engines": {
     "node": "^16"

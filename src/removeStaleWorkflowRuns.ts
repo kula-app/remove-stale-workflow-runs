@@ -5,10 +5,14 @@ export async function removeStaleWorkflowRuns({
   owner,
   repo,
   authToken,
+  dryRun,
+  maxRunsLimit,
 }: {
   authToken: string;
   owner: string;
   repo: string;
+  dryRun: boolean;
+  maxRunsLimit: number;
 }) {
   const octokit = new Octokit({
     auth: authToken,
@@ -45,11 +49,29 @@ export async function removeStaleWorkflowRuns({
 
   // Fetch all workflow runs
   core.info(`Fetching all workflow runs of repo '${owner}/${repo}' ...`);
-  const runs = await octokit.paginate(octokit.actions.listWorkflowRunsForRepo, {
-    owner: owner,
-    repo: repo,
-    per_page: 100,
-  });
+  if (maxRunsLimit > 0) {
+    core.warning(`Number of workflows is limited to ${maxRunsLimit}`);
+  } else {
+    core.debug(`No limit for workflow runs given`);
+  }
+  let fetchedRunsCounter = 0;
+  const runs = await octokit.paginate(
+    octokit.actions.listWorkflowRunsForRepo,
+    {
+      owner: owner,
+      repo: repo,
+      per_page: 100,
+    },
+    (response, done) => {
+      fetchedRunsCounter += response.data.length;
+      core.debug(`Fetched ${fetchedRunsCounter}/${response.data.total_count} runs...`);
+      if (maxRunsLimit > 0 && fetchedRunsCounter >= maxRunsLimit) {
+        core.warning(`Workflow run limit of ${maxRunsLimit} reached, not fetching further pages!`);
+        done();
+      }
+      return response.data;
+    },
+  );
   if (runs.length === 0) {
     core.info(`No workflow runs found, nothing left to do!`);
     return;
@@ -79,17 +101,25 @@ export async function removeStaleWorkflowRuns({
   for (const [idx, run] of runs.entries()) {
     if (staleBranches.has(run.head_branch)) {
       core.info(
-        `(${idx}/${runs.length}) Workflow run #${run.run_number} used stale branch '${run.head_branch}', deleting it...`,
+        `(${idx + 1}/${runs.length}) Workflow run #${run.run_number} used stale branch '${
+          run.head_branch
+        }', deleting it...`,
       );
-      await octokit.actions.deleteWorkflowRun({
-        owner: owner,
-        repo: repo,
-        run_id: run.id,
-      });
+      if (!dryRun) {
+        await octokit.actions.deleteWorkflowRun({
+          owner: owner,
+          repo: repo,
+          run_id: run.id,
+        });
+      } else {
+        core.warning('Dry run is enabled, not deleting!');
+      }
       counter += 1;
     } else {
       core.info(
-        `(${idx}/${runs.length}) Workflow run #${run.run_number} used active branch '${run.head_branch}', skipping it...`,
+        `(${idx + 1}/${runs.length}) Workflow run #${run.run_number} used active branch '${
+          run.head_branch
+        }', skipping it...`,
       );
     }
   }

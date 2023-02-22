@@ -10,13 +10,19 @@ async function run() {
       throw `Invalid repository "${repository}" (needs to have one slash, i.e. 'owner/repo')`;
     }
     const [owner, repo] = repoParts;
-    const authToken = core.getInput('token');
+    const authToken = core.getInput('token', {
+      required: true,
+    });
+    const dryRun = core.getBooleanInput('dry_run');
+    const maxRunsLimit = parseInt(core.getInput('max_runs_limit'));
 
     // -- Perform Tasks --
     await removeStaleWorkflowRuns({
       authToken,
       owner,
       repo,
+      dryRun,
+      maxRunsLimit,
     });
   } catch (error: any) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
