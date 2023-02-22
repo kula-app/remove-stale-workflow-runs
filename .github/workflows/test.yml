@@ -8,7 +8,8 @@ on:
 
 jobs:
   # unit tests
-  units:
+  run-unit-tests:
+    name: Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,10 +23,11 @@ jobs:
           INPUT_TOKEN: ${{ github.token }}
 
   # test action works running from the graph
-  test:
+  test-action:
+    name: Test GitHub Action
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ./
         with:
-          milliseconds: 1000
+          repository: ${{ github.repository }}
