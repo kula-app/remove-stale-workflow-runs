@@ -11,6 +11,7 @@ jobs:
   pre-release:
     name: Create Pre-Release
     runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'main' }}
     steps:
       - uses: actions/checkout@v2
       - name: Create GitHub Release
@@ -23,6 +24,7 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     steps:
       - uses: actions/checkout@v2
       - name: Create GitHub Release
