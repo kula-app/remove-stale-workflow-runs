@@ -1,10 +1,10 @@
-name: "units-test"
+name: 'units-test'
 on:
   pull_request:
   push:
     branches:
       - main
-      - "releases/*"
+      - 'releases/*'
 
 jobs:
   # unit tests
@@ -18,6 +18,8 @@ jobs:
           node-version-file: .node-version
       - run: yarn install
       - run: yarn test
+        env:
+          INPUT_TOKEN: ${{ github.token }}
 
   # test action works running from the graph
   test:
