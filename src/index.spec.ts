@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import * as cp from 'child_process';
 import * as path from 'path';
 import * as process from 'process';
@@ -13,10 +15,8 @@ test('test runs', () => {
     console.log(result);
   } catch (error) {
     console.error(error);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    console.error(error.stdout.toString());
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    console.error(error.stderr.toString());
-    fail(error);
+    console.error(error.stdout?.toString());
+    console.error(error.stderr?.toString());
+    throw error;
   }
 });
