@@ -5,6 +5,7 @@ import * as process from 'process';
 test('test runs', () => {
   process.env['INPUT_REPOSITORY'] = 'kula-app/remove-stale-workflow-runs';
   process.env['INPUT_MAX_RUNS_LIMIT'] = '5000';
+  process.env['INPUT_DRY_RUN'] = 'false';
   const ip = path.join(__dirname, '../', 'dist', 'index.js');
   const cmd = `node ${ip}`;
   try {
