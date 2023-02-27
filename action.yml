@@ -3,10 +3,12 @@ description: Removes workflow runs of delete p
 inputs:
   token:
     description: Personal access token (auto-populated). It is used only because anonymous requests are rate-limited. It can be overridden to an empty value.
+    required: true
     default: ${{ github.token }}
   repository:
     description: Repository name with owner. E.g. actions/checkout
     required: true
+    default: ${{ github.repository }}
   dry_run:
     description: Only find stale workflow runs but do not delete anything
     default: 'false'
