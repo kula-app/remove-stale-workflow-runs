@@ -50,7 +50,7 @@ export async function removeStaleWorkflowRuns({
   // Fetch all workflow runs
   core.info(`Fetching all workflow runs of repo '${owner}/${repo}' ...`);
   if (maxRunsLimit > 0) {
-    core.warning(`Number of workflows is limited to ${maxRunsLimit}`);
+    core.warning(`Number of workflows to fetch is limited to ${maxRunsLimit}`);
   } else {
     core.debug(`No limit for workflow runs given`);
   }
