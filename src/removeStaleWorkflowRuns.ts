@@ -34,7 +34,16 @@ export async function removeStaleWorkflowRuns({
   for (const branch of branches) {
     core.info(`- ${branch.name}`);
   }
-  const branchNames = new Set(branches.map((branch) => branch.name));
+  // Fetch all existing tags
+  const tags = await octokit.paginate(octokit.repos.listTags, {
+    owner: owner,
+    repo: repo,
+  });
+  core.info(`Found ${tags.length} tags:`);
+  for (const tag of tags) {
+    core.info(`- ${tag.name}`);
+  }
+  const existingRefs = new Set(branches.map((branch) => branch.name).concat(tags.map((tag) => tag.name)));
 
   // Fetch all workflows
   core.info(`Fetching workflows of repo '${owner}/${repo}' ...`);
@@ -80,7 +89,7 @@ export async function removeStaleWorkflowRuns({
     core.info(`Found ${[...runBranches].length} unique branch names in workflow runs`);
 
     // Filter out branches which still exist
-    const staleBranches = new Set([...runBranches].filter((name) => name !== null && !branchNames.has(name)));
+    const staleBranches = new Set([...runBranches].filter((name) => name !== null && !existingRefs.has(name)));
     const sortedStaleBranchNames = [...staleBranches].sort().flatMap((branch) => branch as string);
     if (sortedStaleBranchNames.length === 0) {
       core.info('No stale branch names found, continuing with next batch of runs...');
@@ -96,7 +105,7 @@ export async function removeStaleWorkflowRuns({
     for (const [idx, run] of runs.entries()) {
       if (staleBranches.has(run.head_branch)) {
         core.info(
-          `(${idx + 1}/${runs.length}) Workflow run #${run.run_number} used stale branch '${
+          `(${idx + 1}/${runs.length}) Workflow run #${run.run_number} used stale ref '${
             run.head_branch
           }', deleting it...`,
         );
@@ -112,7 +121,7 @@ export async function removeStaleWorkflowRuns({
         counter += 1;
       } else {
         core.info(
-          `(${idx + 1}/${runs.length}) Workflow run #${run.run_number} used active branch '${
+          `(${idx + 1}/${runs.length}) Workflow run #${run.run_number} used active ref '${
             run.head_branch
           }', skipping it...`,
         );
